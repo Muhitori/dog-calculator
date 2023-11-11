@@ -82,7 +82,7 @@ export default function Home() {
 			<Grid item xs></Grid>
 			<Grid item xs={8} display='flex' flexDirection='column'>
 				<Box display='flex' flexDirection='column' gap={1}>
-					<Box width='100%' mb={1}>
+					<Box width='100%' display='flex' justifyContent='center' mb={1}>
 						<DateRangePicker onPeriodChange={handlePeriodChange} />
 					</Box>
 					<Divider />

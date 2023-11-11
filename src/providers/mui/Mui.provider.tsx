@@ -4,6 +4,8 @@ import { FC, ReactNode, useMemo } from "react";
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme } from "@mui/material/styles";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { getThemePalette } from "./palette";
 
 interface Props {
@@ -17,8 +19,10 @@ export const MuiProvider: FC<Props> = ({ children }) => {
 
 	return (
 		<ThemeProvider theme={theme}>
-			<CssBaseline />
-			{children}
+			<LocalizationProvider dateAdapter={AdapterDayjs}>
+				<CssBaseline />
+				{children}
+			</LocalizationProvider>
 		</ThemeProvider>
 	);
 };

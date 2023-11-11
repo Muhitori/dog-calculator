@@ -143,24 +143,6 @@ export const DOG_FOODS = {
 			puppies: [1, 2],
 		},
 	},
-	undevit: {
-		name: "Ундевіт",
-		dogs: {
-			tribal: 3,
-			search: 3,
-			reserve: 3,
-			puppies: [1, 1.5],
-		},
-	},
-	vitaminD: {
-		name: "Вітамін 'D' в олії",
-		dogs: {
-			tribal: 8,
-			search: 8,
-			reserve: 8,
-			puppies: [1, 4],
-		},
-	},
 };
 
 export const DOGS_STATE = {
@@ -186,8 +168,6 @@ export const TABLE_STATE = {
 	meatBoneFlour: "",
 	chalk: "",
 	calcium: "",
-	undevit: "",
-	vitaminD: "",
 };
 
 export type FoodType = keyof typeof DOG_FOODS;

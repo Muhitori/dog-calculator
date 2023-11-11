@@ -1,6 +1,7 @@
 "use client";
 
 import { Article } from "@/components/Article";
+import { DateRangePicker } from "@/components/DateRangePicker";
 import { Input } from "@/components/Input";
 import {
 	DOGS_STATE,
@@ -12,29 +13,22 @@ import {
 import { Box, Divider, Grid, Typography } from "@mui/material";
 import { useState } from "react";
 
-const daysInYear = () => {
-	const year = new Date().getFullYear();
-	return (year % 4 === 0 && year % 100 > 0) || year % 400 == 0 ? 366 : 365;
-};
-
-const getPuppiesFood = (food: number[], puppies: number) => {
+const getPuppiesFood = (food: number[], puppies: number, period: number) => {
 	if (!food || !food.length) return "";
 
 	if (food.length === 1) {
-		return food[0] * puppies * daysInYear();
+		return food[0] * puppies * period;
 	}
 
-	return `${food[0] * puppies * daysInYear()} - ${
-		food[1] * puppies * daysInYear()
-	}`;
+	return `${food[0] * puppies * period} - ${food[1] * puppies * period}`;
 };
 
-const sumFood = (key: FoodType, dogs: typeof DOGS_STATE) => {
+const sumFood = (key: FoodType, dogs: typeof DOGS_STATE, period: number) => {
 	const { tribal, search, reserve, puppies } = DOG_FOODS[key].dogs;
-	const puppiesFood = getPuppiesFood(puppies, dogs.puppies);
+	const puppiesFood = getPuppiesFood(puppies, dogs.puppies, period);
 	const adultDogFood =
 		(tribal * dogs.tribal + search * dogs.search + reserve * dogs.reserve) *
-		daysInYear();
+		period;
 
 	if (typeof puppiesFood === "string") {
 		return `${adultDogFood} + для цуценят: ${puppiesFood}`;
@@ -43,13 +37,17 @@ const sumFood = (key: FoodType, dogs: typeof DOGS_STATE) => {
 	return adultDogFood + puppiesFood;
 };
 
-const updateFoods = (foods: typeof TABLE_STATE, dogs: typeof DOGS_STATE) => {
+const updateFoods = (
+	foods: typeof TABLE_STATE,
+	dogs: typeof DOGS_STATE,
+	period: number
+) => {
 	const newFoods = { ...foods };
 
-	Object.entries(newFoods).map(([key, oldFood]) => {
+	Object.keys(newFoods).map((key) => {
 		const foodType = key as FoodType;
 
-		newFoods[foodType] = String(sumFood(foodType, dogs));
+		newFoods[foodType] = String(sumFood(foodType, dogs, period));
 	});
 
 	return newFoods;
@@ -58,6 +56,7 @@ const updateFoods = (foods: typeof TABLE_STATE, dogs: typeof DOGS_STATE) => {
 export default function Home() {
 	const [dogs, setDogs] = useState(DOGS_STATE);
 	const [foods, setFoods] = useState(TABLE_STATE);
+	const [period, setPeriod] = useState(0);
 
 	const calculate = (name: DogType, value: number) => {
 		const newDogs = {
@@ -65,7 +64,12 @@ export default function Home() {
 			[name]: value,
 		};
 		setDogs(newDogs);
-		setFoods(updateFoods(foods, newDogs));
+		setFoods(updateFoods(foods, newDogs, period));
+	};
+
+	const handlePeriodChange = (period: number) => {
+		setPeriod(period);
+		setFoods(updateFoods(foods, dogs, period));
 	};
 
 	return (
@@ -77,10 +81,16 @@ export default function Home() {
 			</Grid>
 			<Grid item xs></Grid>
 			<Grid item xs={8} display='flex' flexDirection='column'>
-				<Box display='flex' justifyContent='space-between'>
-					{Object.keys(DOGS_STATE).map((dog) => (
-						<Input key={dog} name={dog as DogType} onChange={calculate} />
-					))}
+				<Box display='flex' flexDirection='column' gap={1}>
+					<Box width='100%' mb={1}>
+						<DateRangePicker onPeriodChange={handlePeriodChange} />
+					</Box>
+					<Divider />
+					<Box display='flex' justifyContent='space-between'>
+						{Object.keys(DOGS_STATE).map((dog) => (
+							<Input key={dog} name={dog as DogType} onChange={calculate} />
+						))}
+					</Box>
 				</Box>
 				<Box display='flex' flexDirection='column' gap={2}>
 					<Article label='Назва продукту' value='Кількість, грамм' />

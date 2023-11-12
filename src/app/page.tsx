@@ -113,7 +113,7 @@ export default function Home() {
 			<Grid item xs={12}>
 				<Typography textAlign='center' variant='h5'>
 					{`Розрахунок потреби у натуральних продуктах для годування
-					службових собак (відповідно до ПКМУ від 15.10.2001 # 1348)`}
+					службових собак (відповідно до ПКМУ від 15.10.2001 №1348)`}
 				</Typography>
 			</Grid>
 			<Grid item xs></Grid>

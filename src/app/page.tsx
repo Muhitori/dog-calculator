@@ -135,7 +135,7 @@ export default function Home() {
 				</Grid>
 
 				<Grid container item direction='column' gap={2}>
-					<Article label='Назва продукту' value='Кількість, кілограмм' />
+					<Article label='Назва продукту' value='Кількість, кілограм' />
 					<Divider />
 
 					{Object.keys(TABLE_STATE).map((food) => {

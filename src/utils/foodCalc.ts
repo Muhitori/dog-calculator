@@ -19,7 +19,16 @@ const getPuppiesFood = (
 
 	if (food.length === 1) {
 		const result = food[0] * puppies * period;
-		return key === "eggs" ? `${result} штук` : normalize(result);
+
+		if (key === "eggs") {
+			return `${result} штук`;
+		}
+
+		if (key === "animalFat") {
+			return `${result} грам`;
+		}
+
+		return normalize(result);
 	}
 
 	const min = food[0] * puppies * period;
@@ -29,6 +38,14 @@ const getPuppiesFood = (
 		return `${min * 3} - ${max * 3} пігулок`;
 	}
 
+	if (key === "fishFat") {
+		return `${min} - ${max} грам`;
+	}
+
+	if (key === "milk") {
+		return `${min} - ${max} мл.`;
+	}
+
 	return `${normalize(min)} - ${normalize(max)}`;
 };
 
@@ -36,16 +53,19 @@ const getAllDogFood = (key: FoodType, dogs: DogsState, period: number) => {
 	const { tribal, search, reserve, puppies } = DOG_FOODS[key].dogs;
 
 	const puppiesFood = getPuppiesFood(key, puppies, dogs.puppies, period);
-	const adultDogFood = normalize(
+	const adultDogFood =
 		(tribal * dogs.tribal + search * dogs.search + reserve * dogs.reserve) *
-			period
-	);
+		period;
 
 	if (typeof puppiesFood === "string") {
-		return `${adultDogFood} + для цуценят: ${puppiesFood}`;
+		if (key === "animalFat") {
+			return `${adultDogFood} грам + для цуценят: ${puppiesFood}`;
+		}
+
+		return `${normalize(adultDogFood)} + для цуценят: ${puppiesFood}`;
 	}
 
-	return adultDogFood + puppiesFood;
+	return normalize(adultDogFood + puppiesFood);
 };
 
 const getAdultDogFood = (
@@ -56,6 +76,11 @@ const getAdultDogFood = (
 ) => {
 	const dogCount = dogs[dogType];
 	const dogFood = DOG_FOODS[key].dogs[dogType] as number;
+	const result = dogCount * dogFood * period;
+
+	if (key === "animalFat") {
+		return `${result} грам`;
+	}
 
 	return normalize(dogCount * dogFood * period);
 };

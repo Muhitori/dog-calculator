@@ -67,7 +67,6 @@ export default function Home() {
 			);
 			return;
 		}
-		console.log(newEnd.diff(newStart, "day"));
 
 		const newPeriod = newEnd.diff(newStart, "day");
 		setPeriod(newPeriod);

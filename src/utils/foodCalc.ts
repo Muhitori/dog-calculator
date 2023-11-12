@@ -19,14 +19,14 @@ const getPuppiesFood = (
 
 	if (food.length === 1) {
 		const result = food[0] * puppies * period;
-		return key === "eggs" ? result : normalize(result);
+		return key === "eggs" ? `${result} штук` : normalize(result);
 	}
 
 	const min = food[0] * puppies * period;
 	const max = food[1] * puppies * period;
 
 	if (key === "calcium") {
-		return `${min * 3} - ${max * 3}`;
+		return `${min * 3} - ${max * 3} таблеток`;
 	}
 
 	return `${normalize(min)} - ${normalize(max)}`;
@@ -43,10 +43,6 @@ const getAllDogFood = (key: FoodType, dogs: DogsState, period: number) => {
 
 	if (typeof puppiesFood === "string") {
 		return `${adultDogFood} + для цуценят: ${puppiesFood}`;
-	}
-
-	if (key === "eggs") {
-		return puppiesFood;
 	}
 
 	return adultDogFood + puppiesFood;

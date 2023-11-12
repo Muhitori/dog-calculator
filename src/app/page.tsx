@@ -3,6 +3,7 @@
 import { Article } from "@/components/Article";
 import { DateRangePicker } from "@/components/DateRangePicker";
 import { Input } from "@/components/Input";
+import ScrollButton from "@/components/ScrollButton";
 import { Select } from "@/components/Select";
 import { Sidebar } from "@/components/Sidebar";
 import {
@@ -14,6 +15,7 @@ import {
 	TABLE_STATE,
 	selectOptions,
 } from "@/constants/dogs";
+import { snackbarGenerator } from "@/providers/notistack/SnackbarGenerator";
 import { updateFoods } from "@/utils/foodCalc";
 import { Box, Button, Divider, Grid, Typography } from "@mui/material";
 import { Dayjs } from "dayjs";
@@ -50,14 +52,23 @@ export default function Home() {
 		setFoods(updateFoods(selectedDogType, foods, newDogs, period));
 	};
 
-	const handlePeriodChange = (
-		start: Dayjs | null,
-		end: Dayjs | null,
-		period: number
-	) => {
-		setPeriod(period);
+	const handlePeriodChange = (start: Dayjs | null, end: Dayjs | null) => {
 		setStart(start);
 		setEnd(end);
+
+		if (start === null || end === null) {
+			snackbarGenerator.error("Помилка, одна з дат пуста.");
+			return;
+		}
+
+		if (start > end) {
+			snackbarGenerator.error(
+				"Помилка, період закінчується раніше ніж починається."
+			);
+			return;
+		}
+
+		setPeriod(end.diff(start, "day"));
 
 		setFoods(updateFoods(selectedDogType, foods, dogs, period));
 	};
@@ -68,7 +79,7 @@ export default function Home() {
 	};
 
 	return (
-		<Grid container spacing={2}>
+		<Grid container spacing={2} p={1}>
 			<Sidebar opened={openedSidebar} onClose={closeSidebar}>
 				<Box height='100%' display='flex' flexDirection='column' gap={1}>
 					<DateRangePicker
@@ -98,13 +109,11 @@ export default function Home() {
 					</Box>
 				</Box>
 			</Sidebar>
-
 			<Grid item xs={12}>
 				<Typography textAlign='center' variant='h5'>
 					Норма годування службових собак
 				</Typography>
 			</Grid>
-
 			<Grid item xs></Grid>
 			<Grid item container xs={12} md={8} spacing={2} alignItems='center'>
 				<Grid item xs={12} md={6}>
@@ -142,6 +151,7 @@ export default function Home() {
 				</Grid>
 			</Grid>
 			<Grid item xs></Grid>
+			<ScrollButton />
 		</Grid>
 	);
 }

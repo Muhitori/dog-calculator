@@ -7,11 +7,7 @@ import { FC, useState } from "react";
 interface Props {
 	baseStart: Dayjs | null;
 	baseEnd: Dayjs | null;
-	onPeriodChange: (
-		start: Dayjs | null,
-		end: Dayjs | null,
-		period: number
-	) => void;
+	onPeriodChange: (start: Dayjs | null, end: Dayjs | null) => void;
 }
 
 export const DateRangePicker: FC<Props> = ({
@@ -28,22 +24,6 @@ export const DateRangePicker: FC<Props> = ({
 
 	const handleEndChange = (end: Dayjs | null) => {
 		setEnd(end);
-	};
-
-	const handleConfirm = () => {
-		if (start === null || end === null) {
-			snackbarGenerator.error("Помилка, одна з дат пуста.");
-			return;
-		}
-
-		if (start > end) {
-			snackbarGenerator.error(
-				"Помилка, період закінчується раніше ніж починається."
-			);
-			return;
-		}
-
-		onPeriodChange(start, end, end.diff(start, "day"));
 	};
 
 	return (
@@ -63,7 +43,7 @@ export const DateRangePicker: FC<Props> = ({
 				onChange={handleEndChange}
 				format='DD-MM-YYYY'
 			/>
-			<Button variant='outlined' onClick={handleConfirm}>
+			<Button variant='outlined' onClick={() => onPeriodChange(start, end)}>
 				Підтвердити
 			</Button>
 		</Box>

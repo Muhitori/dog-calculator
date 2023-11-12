@@ -26,7 +26,7 @@ const getPuppiesFood = (
 	const max = food[1] * puppies * period;
 
 	if (key === "calcium") {
-		return `${min * 3} - ${max * 3} таблеток`;
+		return `${min * 3} - ${max * 3} пігулок`;
 	}
 
 	return `${normalize(min)} - ${normalize(max)}`;

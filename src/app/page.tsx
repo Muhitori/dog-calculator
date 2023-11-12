@@ -52,25 +52,27 @@ export default function Home() {
 		setFoods(updateFoods(selectedDogType, foods, newDogs, period));
 	};
 
-	const handlePeriodChange = (start: Dayjs | null, end: Dayjs | null) => {
-		setStart(start);
-		setEnd(end);
+	const handlePeriodChange = (newStart: Dayjs | null, newEnd: Dayjs | null) => {
+		setStart(newStart);
+		setEnd(newEnd);
 
-		if (start === null || end === null) {
+		if (newStart === null || newEnd === null) {
 			snackbarGenerator.error("Помилка, одна з дат пуста.");
 			return;
 		}
 
-		if (start > end) {
+		if (newStart > newEnd) {
 			snackbarGenerator.error(
 				"Помилка, період закінчується раніше ніж починається."
 			);
 			return;
 		}
+		console.log(newEnd.diff(newStart, "day"));
 
-		setPeriod(end.diff(start, "day"));
+		const newPeriod = newEnd.diff(newStart, "day");
+		setPeriod(newPeriod);
 
-		setFoods(updateFoods(selectedDogType, foods, dogs, period));
+		setFoods(updateFoods(selectedDogType, foods, dogs, newPeriod));
 	};
 
 	const handleSelect = (dogType: SelectOptions) => {

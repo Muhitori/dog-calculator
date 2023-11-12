@@ -1,5 +1,7 @@
+"use client";
+
 import { IconButton } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 
 const ScrollButton = () => {
@@ -15,13 +17,19 @@ const ScrollButton = () => {
 	};
 
 	const scrollToTop = () => {
-		window.scrollTo({
-			top: 0,
-			behavior: "smooth",
-		});
+		if (typeof window !== "undefined") {
+			window.scrollTo({
+				top: 0,
+				behavior: "smooth",
+			});
+		}
 	};
 
-	window.addEventListener("scroll", toggleVisible);
+	useEffect(() => {
+		if (typeof window !== "undefined") {
+			window.addEventListener("scroll", toggleVisible);
+		}
+	}, []);
 
 	return (
 		<IconButton

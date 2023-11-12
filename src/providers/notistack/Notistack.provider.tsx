@@ -1,6 +1,5 @@
 "use client";
 
-import { MAX_SNACK } from "@/constants";
 import { SnackbarProvider } from "notistack";
 import { FC } from "react";
 import { SnackbarGenerator } from "./SnackbarGenerator";
@@ -11,7 +10,7 @@ interface Props {
 
 export const NotistackProvider: FC<Props> = ({ children }) => {
 	return (
-		<SnackbarProvider maxSnack={MAX_SNACK}>
+		<SnackbarProvider maxSnack={3}>
 			<SnackbarGenerator />
 			{children}
 		</SnackbarProvider>

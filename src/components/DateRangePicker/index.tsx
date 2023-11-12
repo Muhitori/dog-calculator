@@ -5,12 +5,22 @@ import { Dayjs } from "dayjs";
 import { FC, useState } from "react";
 
 interface Props {
-	onPeriodChange: (period: number) => void;
+	baseStart: Dayjs | null;
+	baseEnd: Dayjs | null;
+	onPeriodChange: (
+		start: Dayjs | null,
+		end: Dayjs | null,
+		period: number
+	) => void;
 }
 
-export const DateRangePicker: FC<Props> = ({ onPeriodChange }) => {
-	const [start, setStart] = useState<Dayjs | null>(null);
-	const [end, setEnd] = useState<Dayjs | null>(null);
+export const DateRangePicker: FC<Props> = ({
+	baseStart,
+	baseEnd,
+	onPeriodChange,
+}) => {
+	const [start, setStart] = useState<Dayjs | null>(baseStart);
+	const [end, setEnd] = useState<Dayjs | null>(baseEnd);
 
 	const handleStartChange = (start: Dayjs | null) => {
 		setStart(start);
@@ -33,11 +43,11 @@ export const DateRangePicker: FC<Props> = ({ onPeriodChange }) => {
 			return;
 		}
 
-		onPeriodChange(end.diff(start, "day"));
+		onPeriodChange(start, end, end.diff(start, "day"));
 	};
 
 	return (
-		<Box display='flex' alignItems='center' gap={4}>
+		<Box display='flex' flexDirection='column' gap={2}>
 			<Typography display='inline-block' variant='body1'>
 				Період:
 			</Typography>

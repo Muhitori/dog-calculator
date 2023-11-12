@@ -1,23 +1,25 @@
-import { Box } from "@mui/material";
+import { Divider, Grid } from "@mui/material";
 import { FC } from "react";
 
 interface Props {
 	label: string;
-	value?: string | number;
+	value: string | number;
 }
 
 export const Article: FC<Props> = ({ label, value }) => {
 	return (
-		<Box display='flex'>
-			<Box
-				sx={{
-					width: "50%",
-					borderRight: value ? 1 : 0,
-					p: 0.2,
-				}}>
+		<Grid container item>
+			<Grid item xs={5}>
 				{label}
-			</Box>
-			{value && <Box pl={4}>{value}</Box>}
-		</Box>
+			</Grid>
+
+			<Grid item xs />
+			<Divider orientation='vertical' />
+			<Grid item xs />
+
+			<Grid item xs={5} justifyContent='center'>
+				{value}
+			</Grid>
+		</Grid>
 	);
 };

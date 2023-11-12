@@ -7,7 +7,8 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
 	title: "Dog food calculator",
-	description: "Created special for Андрей 'Череп' Черевко",
+	description:
+		"Created special for Андрей 'Череп' Черевко from 226 навчальна група",
 };
 
 export default function RootLayout({

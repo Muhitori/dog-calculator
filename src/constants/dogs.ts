@@ -171,3 +171,11 @@ export const TABLE_STATE = {
 };
 
 export type FoodType = keyof typeof DOG_FOODS;
+export type DogsState = typeof DOGS_STATE;
+
+export const selectOptions = [
+	{ label: "загальна", value: "all" },
+	...Object.entries(DOGS).map(([value, label]) => ({ label, value })),
+] as const;
+
+export type SelectOptions = DogType | "all";

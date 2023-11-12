@@ -3,97 +3,129 @@
 import { Article } from "@/components/Article";
 import { DateRangePicker } from "@/components/DateRangePicker";
 import { Input } from "@/components/Input";
+import { Select } from "@/components/Select";
+import { Sidebar } from "@/components/Sidebar";
 import {
 	DOGS_STATE,
 	DOG_FOODS,
 	DogType,
 	FoodType,
+	SelectOptions,
 	TABLE_STATE,
+	selectOptions,
 } from "@/constants/dogs";
-import { Box, Divider, Grid, Typography } from "@mui/material";
+import { updateFoods } from "@/utils/foodCalc";
+import { Box, Button, Divider, Grid, Typography } from "@mui/material";
+import { Dayjs } from "dayjs";
 import { useState } from "react";
 
-const getPuppiesFood = (food: number[], puppies: number, period: number) => {
-	if (!food || !food.length) return "";
-
-	if (food.length === 1) {
-		return food[0] * puppies * period;
-	}
-
-	return `${food[0] * puppies * period} - ${food[1] * puppies * period}`;
-};
-
-const sumFood = (key: FoodType, dogs: typeof DOGS_STATE, period: number) => {
-	const { tribal, search, reserve, puppies } = DOG_FOODS[key].dogs;
-	const puppiesFood = getPuppiesFood(puppies, dogs.puppies, period);
-	const adultDogFood =
-		(tribal * dogs.tribal + search * dogs.search + reserve * dogs.reserve) *
-		period;
-
-	if (typeof puppiesFood === "string") {
-		return `${adultDogFood} + для цуценят: ${puppiesFood}`;
-	}
-
-	return adultDogFood + puppiesFood;
-};
-
-const updateFoods = (
-	foods: typeof TABLE_STATE,
-	dogs: typeof DOGS_STATE,
-	period: number
-) => {
-	const newFoods = { ...foods };
-
-	Object.keys(newFoods).map((key) => {
-		const foodType = key as FoodType;
-
-		newFoods[foodType] = String(sumFood(foodType, dogs, period));
-	});
-
-	return newFoods;
-};
-
 export default function Home() {
+	const [openedSidebar, setOpenedSidebar] = useState(false);
+
 	const [dogs, setDogs] = useState(DOGS_STATE);
 	const [foods, setFoods] = useState(TABLE_STATE);
+
+	const [start, setStart] = useState<Dayjs | null>(null);
+	const [end, setEnd] = useState<Dayjs | null>(null);
 	const [period, setPeriod] = useState(0);
 
-	const calculate = (name: DogType, value: number) => {
+	const [selectedDogType, setSelectedDogType] = useState<SelectOptions>(
+		selectOptions[0].value
+	);
+
+	const openSidebar = () => {
+		setOpenedSidebar(true);
+	};
+
+	const closeSidebar = () => {
+		setOpenedSidebar(false);
+	};
+
+	const handleDogCountChange = (name: DogType, value: number) => {
 		const newDogs = {
 			...dogs,
 			[name]: value,
 		};
 		setDogs(newDogs);
-		setFoods(updateFoods(foods, newDogs, period));
+		setFoods(updateFoods(selectedDogType, foods, newDogs, period));
 	};
 
-	const handlePeriodChange = (period: number) => {
+	const handlePeriodChange = (
+		start: Dayjs | null,
+		end: Dayjs | null,
+		period: number
+	) => {
 		setPeriod(period);
-		setFoods(updateFoods(foods, dogs, period));
+		setStart(start);
+		setEnd(end);
+
+		setFoods(updateFoods(selectedDogType, foods, dogs, period));
+	};
+
+	const handleSelect = (dogType: SelectOptions) => {
+		setSelectedDogType(dogType);
+		setFoods(updateFoods(dogType, foods, dogs, period));
 	};
 
 	return (
 		<Grid container spacing={2}>
+			<Sidebar opened={openedSidebar} onClose={closeSidebar}>
+				<Box height='100%' display='flex' flexDirection='column' gap={1}>
+					<DateRangePicker
+						baseStart={start}
+						baseEnd={end}
+						onPeriodChange={handlePeriodChange}
+					/>
+
+					<Divider sx={{ m: 1 }} />
+
+					<Typography display='inline-block' variant='body1'>
+						Собаки:
+					</Typography>
+					<Box
+						height='100%'
+						display='flex'
+						flexDirection='column'
+						justifyContent='space-between'>
+						{Object.keys(DOGS_STATE).map((dog) => (
+							<Input
+								key={dog}
+								name={dog as DogType}
+								baseValue={dogs[dog as DogType]}
+								onChange={handleDogCountChange}
+							/>
+						))}
+					</Box>
+				</Box>
+			</Sidebar>
+
 			<Grid item xs={12}>
 				<Typography textAlign='center' variant='h5'>
 					Норма годування службових собак
 				</Typography>
 			</Grid>
+
 			<Grid item xs></Grid>
-			<Grid item xs={8} display='flex' flexDirection='column'>
-				<Box display='flex' flexDirection='column' gap={1}>
-					<Box width='100%' display='flex' justifyContent='center' mb={1}>
-						<DateRangePicker onPeriodChange={handlePeriodChange} />
-					</Box>
-					<Divider />
-					<Box display='flex' justifyContent='space-between'>
-						{Object.keys(DOGS_STATE).map((dog) => (
-							<Input key={dog} name={dog as DogType} onChange={calculate} />
-						))}
-					</Box>
-				</Box>
-				<Box display='flex' flexDirection='column' gap={2}>
-					<Article label='Назва продукту' value='Кількість, грамм' />
+			<Grid item container xs={12} md={8} spacing={2} alignItems='center'>
+				<Grid item xs={12} md={6}>
+					<Button
+						disabled={openedSidebar}
+						variant='outlined'
+						fullWidth
+						onClick={openSidebar}>
+						Ввести дані
+					</Button>
+				</Grid>
+				<Grid item xs={12} md={6}>
+					<Select
+						selectedValue={selectedDogType}
+						selectLabel='Класифікація собак'
+						onChange={handleSelect}
+					/>
+				</Grid>
+
+				<Grid container item direction='column' gap={2}>
+					<Article label='Назва продукту' value='Кількість, кілограмм' />
 					<Divider />
 
 					{Object.keys(TABLE_STATE).map((food) => {
@@ -107,7 +139,7 @@ export default function Home() {
 							/>
 						);
 					})}
-				</Box>
+				</Grid>
 			</Grid>
 			<Grid item xs></Grid>
 		</Grid>

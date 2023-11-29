@@ -103,7 +103,7 @@ export default function Home() {
 							<Input
 								key={dog}
 								name={dog as DogType}
-								baseValue={dogs[dog as DogType]}
+								value={dogs[dog as DogType]}
 								onChange={handleDogCountChange}
 							/>
 						))}
@@ -157,4 +157,3 @@ export default function Home() {
 		</Grid>
 	);
 }
-

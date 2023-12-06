@@ -1,3 +1,6 @@
+export const NAME_COLUMN = "Назва продукту";
+export const VALUE_COLUMN = "Кількість, кілограм";
+
 export const DOGS = {
 	tribal: "племінні",
 	search: "розшукові, патрульно-розшукові,сторожові, спеціальні",

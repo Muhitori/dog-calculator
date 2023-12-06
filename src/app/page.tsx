@@ -11,15 +11,18 @@ import {
 	DOG_FOODS,
 	DogType,
 	FoodType,
+	NAME_COLUMN,
 	SelectOptions,
 	TABLE_STATE,
+	VALUE_COLUMN,
 	selectOptions,
 } from "@/constants/dogs";
 import { snackbarGenerator } from "@/providers/notistack/SnackbarGenerator";
 import { updateFoods } from "@/utils/foodCalc";
 import { Box, Button, Divider, Grid, Typography } from "@mui/material";
 import { Dayjs } from "dayjs";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import * as XLSX from "xlsx";
 
 export default function Home() {
 	const [openedSidebar, setOpenedSidebar] = useState(false);
@@ -34,6 +37,26 @@ export default function Home() {
 	const [selectedDogType, setSelectedDogType] = useState<SelectOptions>(
 		selectOptions[0].value
 	);
+
+	const downloadExcel = useCallback(() => {
+		const data = Object.keys(TABLE_STATE).map((food) => {
+			const key = food as FoodType;
+
+			return {
+				[NAME_COLUMN]: DOG_FOODS[key].name,
+				[VALUE_COLUMN]: foods[key],
+			};
+		});
+		const workbookName = selectOptions.find(
+			({ value }) => value === selectedDogType
+		)?.label;
+
+		const worksheet = XLSX.utils.json_to_sheet(data);
+		const workbook = XLSX.utils.book_new();
+
+		XLSX.utils.book_append_sheet(workbook, worksheet, workbookName);
+		XLSX.writeFile(workbook, `Годування собак.xlsx`);
+	}, [foods, selectedDogType]);
 
 	const openSidebar = () => {
 		setOpenedSidebar(true);
@@ -110,15 +133,17 @@ export default function Home() {
 					</Box>
 				</Box>
 			</Sidebar>
+
 			<Grid item xs={12}>
 				<Typography textAlign='center' variant='h5'>
 					{`Розрахунок потреби у натуральних продуктах для годування
 					службових собак (відповідно до ПКМУ від 15.10.2001 №1348)`}
 				</Typography>
 			</Grid>
+
 			<Grid item xs></Grid>
 			<Grid item container xs={12} md={8} spacing={2} alignItems='center'>
-				<Grid item xs={12} md={6}>
+				<Grid item xs={12} md={4}>
 					<Button
 						disabled={openedSidebar}
 						variant='outlined'
@@ -127,16 +152,21 @@ export default function Home() {
 						Ввести дані
 					</Button>
 				</Grid>
-				<Grid item xs={12} md={6}>
+				<Grid item xs={12} md={4}>
 					<Select
 						selectedValue={selectedDogType}
 						selectLabel='Класифікація собак'
 						onChange={handleSelect}
 					/>
 				</Grid>
+				<Grid item xs={12} md={4}>
+					<Button variant='outlined' fullWidth onClick={downloadExcel}>
+						Завантажити
+					</Button>
+				</Grid>
 
 				<Grid container item direction='column' gap={2}>
-					<Article label='Назва продукту' value='Кількість, кілограм' />
+					<Article label={NAME_COLUMN} value={VALUE_COLUMN} />
 					<Divider />
 
 					{Object.keys(TABLE_STATE).map((food) => {

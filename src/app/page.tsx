@@ -52,8 +52,6 @@ export default function Home() {
 				.find(({ value }) => value === selectedDogType)
 				?.label.slice(0, 25);
 
-			console.log(workbookName);
-
 			const worksheet = XLSX.utils.json_to_sheet(data);
 			const workbook = XLSX.utils.book_new();
 

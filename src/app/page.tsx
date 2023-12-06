@@ -39,23 +39,29 @@ export default function Home() {
 	);
 
 	const downloadExcel = useCallback(() => {
-		const data = Object.keys(TABLE_STATE).map((food) => {
-			const key = food as FoodType;
+		try {
+			const data = Object.keys(TABLE_STATE).map((food) => {
+				const key = food as FoodType;
 
-			return {
-				[NAME_COLUMN]: DOG_FOODS[key].name,
-				[VALUE_COLUMN]: foods[key],
-			};
-		});
-		const workbookName = selectOptions.find(
-			({ value }) => value === selectedDogType
-		)?.label;
+				return {
+					[NAME_COLUMN]: DOG_FOODS[key].name,
+					[VALUE_COLUMN]: foods[key],
+				};
+			});
+			const workbookName = selectOptions
+				.find(({ value }) => value === selectedDogType)
+				?.label.slice(0, 25);
 
-		const worksheet = XLSX.utils.json_to_sheet(data);
-		const workbook = XLSX.utils.book_new();
+			console.log(workbookName);
 
-		XLSX.utils.book_append_sheet(workbook, worksheet, workbookName);
-		XLSX.writeFile(workbook, `Годування собак.xlsx`);
+			const worksheet = XLSX.utils.json_to_sheet(data);
+			const workbook = XLSX.utils.book_new();
+
+			XLSX.utils.book_append_sheet(workbook, worksheet, workbookName);
+			XLSX.writeFile(workbook, `Годування собак.xlsx`);
+		} catch (err) {
+			snackbarGenerator.error("Помилка експорту в ексель");
+		}
 	}, [foods, selectedDogType]);
 
 	const openSidebar = () => {

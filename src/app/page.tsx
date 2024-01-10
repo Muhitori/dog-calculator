@@ -21,13 +21,10 @@ import { snackbarGenerator } from "@/providers/notistack/SnackbarGenerator";
 import { updateFoods } from "@/utils/foodCalc";
 import { Box, Button, Divider, Grid, Typography } from "@mui/material";
 import { Dayjs } from "dayjs";
-import dynamic from "next/dynamic";
 import { useCallback, useState } from "react";
 import * as XLSX from "xlsx";
 
-const Background = dynamic(() => import("@/components/Background"), {
-	ssr: false,
-});
+import Background from "@/components/Background";
 
 export default function Home() {
 	const [openedSidebar, setOpenedSidebar] = useState(false);

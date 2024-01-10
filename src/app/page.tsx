@@ -21,8 +21,13 @@ import { snackbarGenerator } from "@/providers/notistack/SnackbarGenerator";
 import { updateFoods } from "@/utils/foodCalc";
 import { Box, Button, Divider, Grid, Typography } from "@mui/material";
 import { Dayjs } from "dayjs";
+import dynamic from "next/dynamic";
 import { useCallback, useState } from "react";
 import * as XLSX from "xlsx";
+
+const Background = dynamic(() => import("@/components/Background"), {
+	ssr: false,
+});
 
 export default function Home() {
 	const [openedSidebar, setOpenedSidebar] = useState(false);
@@ -107,87 +112,90 @@ export default function Home() {
 	};
 
 	return (
-		<Grid container spacing={2} p={1}>
-			<Sidebar opened={openedSidebar} onClose={closeSidebar}>
-				<Box height='100%' display='flex' flexDirection='column' gap={1}>
-					<DateRangePicker
-						baseStart={start}
-						baseEnd={end}
-						onPeriodChange={handlePeriodChange}
-					/>
+		<>
+			<Background />
+			<Grid container spacing={2} p={1}>
+				<Sidebar opened={openedSidebar} onClose={closeSidebar}>
+					<Box height='100%' display='flex' flexDirection='column' gap={1}>
+						<DateRangePicker
+							baseStart={start}
+							baseEnd={end}
+							onPeriodChange={handlePeriodChange}
+						/>
 
-					<Divider sx={{ m: 1 }} />
+						<Divider sx={{ m: 1 }} />
 
-					<Typography display='inline-block' variant='body1'>
-						Собаки:
-					</Typography>
-					<Box
-						height='100%'
-						display='flex'
-						flexDirection='column'
-						justifyContent='space-between'>
-						{Object.keys(DOGS_STATE).map((dog) => (
-							<Input
-								key={dog}
-								name={dog as DogType}
-								value={dogs[dog as DogType]}
-								onChange={handleDogCountChange}
-							/>
-						))}
+						<Typography display='inline-block' variant='body1'>
+							Собаки:
+						</Typography>
+						<Box
+							height='100%'
+							display='flex'
+							flexDirection='column'
+							justifyContent='space-between'>
+							{Object.keys(DOGS_STATE).map((dog) => (
+								<Input
+									key={dog}
+									name={dog as DogType}
+									value={dogs[dog as DogType]}
+									onChange={handleDogCountChange}
+								/>
+							))}
+						</Box>
 					</Box>
-				</Box>
-			</Sidebar>
+				</Sidebar>
 
-			<Grid item xs={12}>
-				<Typography textAlign='center' variant='h5'>
-					{`Розрахунок потреби у натуральних продуктах для годування
+				<Grid item xs={12}>
+					<Typography textAlign='center' variant='h5'>
+						{`Розрахунок потреби у натуральних продуктах для годування
 					службових собак (відповідно до ПКМУ від 15.10.2001 №1348)`}
-				</Typography>
+					</Typography>
+				</Grid>
+
+				<Grid item xs></Grid>
+				<Grid item container xs={12} md={8} spacing={2} alignItems='center'>
+					<Grid item xs={12} md={4}>
+						<Button
+							disabled={openedSidebar}
+							variant='outlined'
+							fullWidth
+							onClick={openSidebar}>
+							Ввести дані
+						</Button>
+					</Grid>
+					<Grid item xs={12} md={4}>
+						<Select
+							selectedValue={selectedDogType}
+							selectLabel='Класифікація собак'
+							onChange={handleSelect}
+						/>
+					</Grid>
+					<Grid item xs={12} md={4}>
+						<Button variant='outlined' fullWidth onClick={downloadExcel}>
+							Завантажити
+						</Button>
+					</Grid>
+
+					<Grid container item direction='column' gap={2}>
+						<Article label={NAME_COLUMN} value={VALUE_COLUMN} />
+						<Divider />
+
+						{Object.keys(TABLE_STATE).map((food) => {
+							const key = food as FoodType;
+
+							return (
+								<Article
+									key={key}
+									label={DOG_FOODS[key].name}
+									value={foods[key]}
+								/>
+							);
+						})}
+					</Grid>
+				</Grid>
+				<Grid item xs></Grid>
+				<ScrollButton />
 			</Grid>
-
-			<Grid item xs></Grid>
-			<Grid item container xs={12} md={8} spacing={2} alignItems='center'>
-				<Grid item xs={12} md={4}>
-					<Button
-						disabled={openedSidebar}
-						variant='outlined'
-						fullWidth
-						onClick={openSidebar}>
-						Ввести дані
-					</Button>
-				</Grid>
-				<Grid item xs={12} md={4}>
-					<Select
-						selectedValue={selectedDogType}
-						selectLabel='Класифікація собак'
-						onChange={handleSelect}
-					/>
-				</Grid>
-				<Grid item xs={12} md={4}>
-					<Button variant='outlined' fullWidth onClick={downloadExcel}>
-						Завантажити
-					</Button>
-				</Grid>
-
-				<Grid container item direction='column' gap={2}>
-					<Article label={NAME_COLUMN} value={VALUE_COLUMN} />
-					<Divider />
-
-					{Object.keys(TABLE_STATE).map((food) => {
-						const key = food as FoodType;
-
-						return (
-							<Article
-								key={key}
-								label={DOG_FOODS[key].name}
-								value={foods[key]}
-							/>
-						);
-					})}
-				</Grid>
-			</Grid>
-			<Grid item xs></Grid>
-			<ScrollButton />
-		</Grid>
+		</>
 	);
 }

@@ -3,9 +3,6 @@ import { grey, blue } from "@mui/material/colors";
 
 const getMainPalette = (): PaletteOptions => {
 	return {
-		background: {
-			default: alpha("#27ae60", 0.3),
-		},
 		primary: blue,
 		secondary: grey,
 		divider: grey[200],
